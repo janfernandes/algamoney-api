@@ -1,12 +1,15 @@
 package com.estudos.algamoneyapi.resource;
 
 
+import com.estudos.algamoneyapi.repository.filter.PessoaFilter;
 import com.estudos.algamoneyapi.event.RecursoCriadoEvent;
 import com.estudos.algamoneyapi.model.Pessoa;
 import com.estudos.algamoneyapi.repository.PessoaRepository;
 import com.estudos.algamoneyapi.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +34,14 @@ public class PessoaResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    public List<Pessoa> listar() {
-        return pessoaRepository.findAll();
+    public Page<Pessoa> pesquisar(PessoaFilter pessoaFilter, Pageable pageable) {
+        return pessoaRepository.filtrar(pessoaFilter, pageable);
     }
+
+//    @GetMapping
+//    public List<Pessoa> listar() {
+//        return pessoaRepository.findAll();
+//    }
 
     @PostMapping
     public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
