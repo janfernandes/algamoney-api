@@ -1,9 +1,6 @@
 package com.estudos.algamoneyapi.resource;
 
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.estudos.algamoneyapi.event.RecursoCriadoEvent;
 import com.estudos.algamoneyapi.exceptionhandler.AlgamoneyExceptionHandler.Erro;
 import com.estudos.algamoneyapi.model.Lancamento;
@@ -23,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 
 @RestController
@@ -57,6 +56,12 @@ public class LancamentoResource {
         Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
+    }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long codigo, @Valid @RequestBody Lancamento lancamento) {
+        Lancamento lancamentoSalvo = lancamentoService.atualizar(codigo, lancamento);
+        return ResponseEntity.ok(lancamentoSalvo);
     }
 
     @ExceptionHandler({ PessoaInexistenteOuInativaException.class })
