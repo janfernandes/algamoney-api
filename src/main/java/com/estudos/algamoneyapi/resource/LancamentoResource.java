@@ -1,6 +1,7 @@
 package com.estudos.algamoneyapi.resource;
 
 
+import com.estudos.algamoneyapi.dto.LancamentoEstatisticaCategoria;
 import com.estudos.algamoneyapi.event.RecursoCriadoEvent;
 import com.estudos.algamoneyapi.exceptionhandler.AlgamoneyExceptionHandler.Erro;
 import com.estudos.algamoneyapi.model.Lancamento;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +41,11 @@ public class LancamentoResource {
 
     @Autowired
     private ApplicationEventPublisher publisher;
+
+    @GetMapping("/estatisticas/por-categoria")
+    public List<LancamentoEstatisticaCategoria> porCategoria(){
+        return this.lancamentoRepository.porCategoria(LocalDate.now());
+    }
 
     @GetMapping
     public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
