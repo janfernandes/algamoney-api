@@ -2,6 +2,7 @@ package com.estudos.algamoneyapi.resource;
 
 
 import com.estudos.algamoneyapi.dto.LancamentoEstatisticaCategoria;
+import com.estudos.algamoneyapi.dto.LancamentoEstatisticaDia;
 import com.estudos.algamoneyapi.event.RecursoCriadoEvent;
 import com.estudos.algamoneyapi.exceptionhandler.AlgamoneyExceptionHandler.Erro;
 import com.estudos.algamoneyapi.model.Lancamento;
@@ -41,6 +42,11 @@ public class LancamentoResource {
 
     @Autowired
     private ApplicationEventPublisher publisher;
+
+    @GetMapping("/estatisticas/por-dia")
+    public List<LancamentoEstatisticaDia> porDia(){
+        return this.lancamentoRepository.porDia(LocalDate.now());
+    }
 
     @GetMapping("/estatisticas/por-categoria")
     public List<LancamentoEstatisticaCategoria> porCategoria(){
