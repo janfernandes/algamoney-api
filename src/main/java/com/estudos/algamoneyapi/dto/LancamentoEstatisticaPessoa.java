@@ -6,22 +6,22 @@ import com.estudos.algamoneyapi.model.TipoLancamento;
 import java.math.BigDecimal;
 
 public class LancamentoEstatisticaPessoa {
-    private TipoLancamento tipoLancamento;
+    private TipoLancamento tipo;
     private Pessoa pessoa;
     private BigDecimal total;
 
     public LancamentoEstatisticaPessoa(TipoLancamento tipoLancamento, Pessoa pessoa, BigDecimal total) {
-        this.tipoLancamento = tipoLancamento;
+        this.tipo = tipoLancamento;
         this.pessoa = pessoa;
         this.total = total;
     }
 
-    public TipoLancamento getTipoLancamento() {
-        return tipoLancamento;
+    public TipoLancamento getTipo() {
+        return tipo;
     }
 
-    public void setTipoLancamento(TipoLancamento tipoLancamento) {
-        this.tipoLancamento = tipoLancamento;
+    public void setTipo(TipoLancamento tipo) {
+        this.tipo = tipo;
     }
 
     public Pessoa getPessoa() {
