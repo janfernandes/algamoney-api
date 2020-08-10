@@ -2,6 +2,7 @@ package com.estudos.algamoneyapi.mail;
 
 import com.estudos.algamoneyapi.model.Lancamento;
 import com.estudos.algamoneyapi.repository.LancamentoRepository;
+import org.hibernate.mapping.UnionSubclass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -49,6 +50,13 @@ public class Mailer {
 //    				"Testando", template, variaveis);
 //    		System.out.println("Terminado o envio de e-mail...");
 //    	}
+
+    public void avisarSobreLancamentosVencidos(List<Lancamento> vencidos) {
+        Map<String, Object> variaveis = new HashMap<>();
+        variaveis.put("lancamentos", vencidos);
+        List<String> emails = Collections.singletonList("janaynambr@gmail.com");
+        this.enviarEmail("fernandesmjanayna@gmail.com", emails, "Lançamentos Vencidos", "mail/aviso-lancamentos-vencidos", variaveis);
+    }
 
     public void enviarEmail(String remetente,
                             List<String> destinatarios, String assunto, String template,

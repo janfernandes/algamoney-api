@@ -2,6 +2,7 @@ package com.estudos.algamoneyapi.service;
 
 
 import com.estudos.algamoneyapi.dto.LancamentoEstatisticaPessoa;
+import com.estudos.algamoneyapi.mail.Mailer;
 import com.estudos.algamoneyapi.model.Lancamento;
 import com.estudos.algamoneyapi.model.Pessoa;
 import com.estudos.algamoneyapi.repository.LancamentoRepository;
@@ -12,6 +13,8 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,17 +30,32 @@ import java.util.*;
 @Service
 public class LancamentoService {
 
+    private static final Logger logger = LoggerFactory.getLogger(LancamentoService.class);
+
     @Autowired
     private PessoaRepository pessoaRepository;
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
 
-//    @Scheduled(fixedDelay = 1000 * 5)
+    @Autowired
+    private Mailer mailer;
+
+//    @Scheduled(fixedDelay = 1000 * 60 * 30)
 //    executa em 18:32 dia 5 de todos os meses de todos os anos
     @Scheduled(cron = "0 32 18 5 * *")
     public void avisarSobreLancamentosVencidos(){
-        System.out.println(">>>>>>>>>>>>>>Método sendo executado...");
+//        System.out.println(">>>>>>>>>>>>>>Método sendo executado...");
+        if(logger.isDebugEnabled())
+            logger.debug("Preparando envio de emails de lancamentos vencidos");
+        List<Lancamento> vencidos = lancamentoRepository.findByDataVencimentoLessThanEqualAndDataPagamentoIsNull(LocalDate.now());
+        if(vencidos.isEmpty()){
+            logger.info("Sem lançamentos vencidos para aviso.");
+            return;
+        }
+        logger.info("Existem {} lancamentos vencidos.", vencidos.size());
+        mailer.avisarSobreLancamentosVencidos(vencidos);
+        logger.info("Envio de email concluido");
     }
 
     public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws JRException {
