@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -31,6 +32,13 @@ public class LancamentoService {
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
+
+//    @Scheduled(fixedDelay = 1000 * 5)
+//    executa em 18:32 dia 5 de todos os meses de todos os anos
+    @Scheduled(cron = "0 32 18 5 * *")
+    public void avisarSobreLancamentosVencidos(){
+        System.out.println(">>>>>>>>>>>>>>Método sendo executado...");
+    }
 
     public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws JRException {
         List<LancamentoEstatisticaPessoa> dados = lancamentoRepository.porPessoa(inicio, fim);

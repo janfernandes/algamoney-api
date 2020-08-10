@@ -1,8 +1,11 @@
 package com.estudos.algamoneyapi.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -123,6 +126,11 @@ public class Lancamento {
 
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+    }
+
+    @JsonIgnore
+    public boolean isReceita(){
+        return TipoLancamento.RECEITA.equals(this.tipo);
     }
 
     @Override
