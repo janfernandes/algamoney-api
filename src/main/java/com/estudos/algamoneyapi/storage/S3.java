@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.acl.Group;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -51,6 +49,11 @@ public class S3 {
         } catch (IOException e) {
             throw new RuntimeException("Problemas ao tentar enviar o arquivo para o S3.", e);
         }
+    }
+
+    public String configurarUrl(String objeto) {
+        return "\\\\" + property.getS3().getBucket() +
+                ".s3.amazonaws.com/" + objeto;
     }
 
     private String gerarNomeUnico(String originalFileName){

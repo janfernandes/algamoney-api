@@ -1,6 +1,7 @@
 package com.estudos.algamoneyapi.resource;
 
 
+import com.estudos.algamoneyapi.dto.Anexo;
 import com.estudos.algamoneyapi.dto.LancamentoEstatisticaCategoria;
 import com.estudos.algamoneyapi.dto.LancamentoEstatisticaDia;
 import com.estudos.algamoneyapi.event.RecursoCriadoEvent;
@@ -10,6 +11,7 @@ import com.estudos.algamoneyapi.repository.LancamentoRepository;
 import com.estudos.algamoneyapi.repository.filter.LancamentoFilter;
 import com.estudos.algamoneyapi.service.LancamentoService;
 import com.estudos.algamoneyapi.service.exception.PessoaInexistenteOuInativaException;
+import com.estudos.algamoneyapi.storage.S3;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,9 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +49,9 @@ public class LancamentoResource {
 
     @Autowired
     private ApplicationEventPublisher publisher;
+
+    @Autowired
+    private S3 s3;
 
     @GetMapping("/estatisticas/por-dia")
     public List<LancamentoEstatisticaDia> porDia(){
@@ -107,10 +109,8 @@ public class LancamentoResource {
     }
 
     @PostMapping("/anexo")
-    public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\ferna\\OneDrive\\Documentos\\anexo --" + anexo.getOriginalFilename());
-        fileOutputStream.write(anexo.getBytes());
-        fileOutputStream.close();
-        return "ok";
+    public Anexo uploadAnexo(@RequestParam MultipartFile anexo) {
+        String nome = s3.salvarTemporariamente(anexo);
+        return new Anexo(nome, s3.configurarUrl(nome));
     }
 }

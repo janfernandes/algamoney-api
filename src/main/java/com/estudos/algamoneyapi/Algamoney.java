@@ -7,9 +7,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties(AlgamoneyApiProperty.class)
-public class AlgamoneyApiApplication {
+public class Algamoney {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AlgamoneyApiApplication.class, args);
+		SpringApplication.run(Algamoney.class, args);
 	}
 }

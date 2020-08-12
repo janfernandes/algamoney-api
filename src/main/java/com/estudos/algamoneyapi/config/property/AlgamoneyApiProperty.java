@@ -60,7 +60,7 @@ public class AlgamoneyApiProperty {
     public static class S3{
         private String accessKeyId;
         private String secretAccessKey;
-        private String bucket = "jmf - algamoney-arquivos";
+        private String bucket = "jmf-algamoney-arquivos";
 
         public String getBucket() {
             return bucket;
