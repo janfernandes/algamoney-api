@@ -8,6 +8,7 @@ import com.estudos.algamoneyapi.model.Pessoa;
 import com.estudos.algamoneyapi.repository.LancamentoRepository;
 import com.estudos.algamoneyapi.repository.PessoaRepository;
 import com.estudos.algamoneyapi.service.exception.PessoaInexistenteOuInativaException;
+import com.estudos.algamoneyapi.storage.S3;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.sql.Date;
@@ -40,6 +42,9 @@ public class LancamentoService {
 
     @Autowired
     private Mailer mailer;
+
+    @Autowired
+    private S3 s3;
 
 //    @Scheduled(fixedDelay = 1000 * 60 * 30)
 //    executa em 18:32 dia 5 de todos os meses de todos os anos
@@ -74,11 +79,20 @@ public class LancamentoService {
         if(!pessoaSalva.isPresent() || pessoaSalva.get().isInativo()){
             throw new PessoaInexistenteOuInativaException();
         }
+        if(StringUtils.hasText(lancamento.getAnexo())){
+            s3.salvar(lancamento.getAnexo());
+        }
         return lancamentoRepository.save(lancamento);
     }
 
     public Lancamento atualizar(Long codigo, Lancamento lancamento) {
         Lancamento lancamentoSalvo = buscarLancamentoPeloCodigo(codigo);
+
+        if(StringUtils.isEmpty(lancamento.getAnexo()) && StringUtils.hasText(lancamentoSalvo.getAnexo())){
+            s3.removerAnexo(lancamentoSalvo.getAnexo());
+        } else if(StringUtils.hasLength(lancamento.getAnexo()) && !lancamento.getAnexo().equals(lancamentoSalvo.getAnexo())){
+            s3.substituir(lancamentoSalvo.getAnexo(), lancamento.getAnexo());
+        }
 
         BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo");
         return lancamentoRepository.save(lancamentoSalvo);

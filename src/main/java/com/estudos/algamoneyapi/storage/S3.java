@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 @Component
@@ -56,8 +58,25 @@ public class S3 {
                 ".s3.amazonaws.com/" + objeto;
     }
 
+    public void salvar(String anexo) {
+        SetObjectTaggingRequest setObjectTaggingRequest = new SetObjectTaggingRequest(property.getS3().getBucket(), anexo,
+                new ObjectTagging(Collections.emptyList()));
+        amazonS3.setObjectTagging(setObjectTaggingRequest);
+    }
+
+    public void substituir(String anexoAntigo, String anexoNovo) {
+        if(StringUtils.hasText(anexoAntigo)){
+            this.removerAnexo(anexoAntigo);
+        }
+        this.salvar(anexoNovo);
+    }
+
+    public void removerAnexo(String anexo) {
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(property.getS3().getBucket(), anexo);
+        amazonS3.deleteObject(deleteObjectRequest);
+    }
+
     private String gerarNomeUnico(String originalFileName){
         return UUID.randomUUID().toString() + "_" + originalFileName;
     }
-
 }

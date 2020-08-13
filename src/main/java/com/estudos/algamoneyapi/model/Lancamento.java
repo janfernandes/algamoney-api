@@ -8,16 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -57,6 +48,11 @@ public class Lancamento {
     @ManyToOne
     @JoinColumn(name = "codigo_pessoa")
     private Pessoa pessoa;
+
+    private String anexo;
+
+    @Transient
+    private String urlAnexo;
 
     public Long getCodigo() {
         return codigo;
@@ -128,6 +124,22 @@ public class Lancamento {
 
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+    }
+
+    public String getAnexo() {
+        return anexo;
+    }
+
+    public void setAnexo(String anexo) {
+        this.anexo = anexo;
+    }
+
+    public String getUrlAnexo() {
+        return urlAnexo;
+    }
+
+    public void setUrlAnexo(String urlAnexo) {
+        this.urlAnexo = urlAnexo;
     }
 
     @JsonIgnore
